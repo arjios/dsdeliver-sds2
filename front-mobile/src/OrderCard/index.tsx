@@ -1,40 +1,54 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
-import Header from '../Header';
+import { StyleSheet, Text, View } from 'react-native';
+import { Order } from '../Orders/types';
+import dayjs from 'dayjs';
+import 'dayjs/locale/pt-br';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
+dayjs.locale('pt-br');
+dayjs.extend(relativeTime);
 
-export default function OrderCard() {
-  const handleOnPress = () => {
+type Props = {
+  order: Order;
+}
 
-  }
-  
+function dateFromNow(date: string) {
+  return dayjs(date).fromNow();
+}
+
+function formatPrice(price: number) {
+  const formatter = new Intl.NumberFormat('pt-BR', {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 2,
+  })
+  return formatter.format(price);
+}
+
+export default function OrderCard({order}:Props) {
   return (
-    <>
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.orderName}>
-              Pedido 1
-            </Text>
-            <Text style={styles.orderPrice}>
-              R$ 50,00
-            </Text>
-          </View>
-          <Text style={styles.text}>
-            Há 30 minutos
+  <>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.orderName}>
+          Pedido {order.id}
+        </Text>
+        <Text style={styles.orderPrice}>
+          {order.total}
+        </Text>
+      </View>
+      <Text style={styles.text}>
+        {dateFromNow(order.moment)}
+      </Text>
+      <View style={styles.productsList}>
+        {order.products.map(product =>(
+          <Text key = {product.id} style={styles.text}>
+            {product.name}
           </Text>
-          <View style={styles.productsList}>
-            <Text style={styles.text}>
-              Pizza Calabresa
-            </Text>
-            <Text style={styles.text}>
-              Pizza Quatro Qurijos
-            </Text>
-            <Text style={styles.text}>
-              Pizza Marguerita
-            </Text>
-          </View>
-        </View>
-    </>
+        ))}
+      </View>
+    </View>
+  </>
   );
 }
 
